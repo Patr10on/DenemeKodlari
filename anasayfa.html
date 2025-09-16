@@ -748,34 +748,45 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
                     });
-                    const result = await response.json();
+                    
+                    const responseText = await response.text();
 
-                    if (result.success) {
-                        let resultText;
-                        if (result.results) {
-                            let combinedOutput = '';
-                            for (const key in result.results) {
-                                combinedOutput += `--- ${key.toUpperCase()} ---\n${result.results[key]}\n\n`;
+                    try {
+                        const result = JSON.parse(responseText);
+
+                        if (result.success) {
+                            let resultText;
+                            if (result.results) {
+                                let combinedOutput = '';
+                                for (const key in result.results) {
+                                    combinedOutput += `--- ${key.toUpperCase()} ---\n${result.results[key]}\n\n`;
+                                }
+                                resultText = combinedOutput;
+                            } else {
+                                resultText = result.result;
                             }
-                            resultText = combinedOutput;
+                            originalResult = resultText;
+                            resultDiv.innerHTML = formatResult(resultText);
+                            submitBtn.classList.add('success');
+                            showNotification('Sorgu başarılı!', 'success');
                         } else {
-                            resultText = result.result;
+                            lastResult = result.message || 'Sorgu başarısız oldu.';
+                            originalResult = lastResult;
+                            resultDiv.innerHTML = `<div class="result-card">${lastResult}</div>`;
+                            submitBtn.classList.add('error');
+                            showNotification(lastResult, 'error');
                         }
-                        originalResult = resultText;
-                        resultDiv.innerHTML = formatResult(resultText);
-                        submitBtn.classList.add('success');
-                        showNotification('Sorgu başarılı!', 'success');
-                    } else {
-                        lastResult = result.message || 'Sorgu başarısız oldu.';
+                    } catch (jsonError) {
+                        lastResult = `JSON çözümleme hatası: ${jsonError.message}. Sunucudan gelen ham veri: ${responseText}`;
                         originalResult = lastResult;
                         resultDiv.innerHTML = `<div class="result-card">${lastResult}</div>`;
                         submitBtn.classList.add('error');
-                        showNotification(lastResult, 'error');
+                        showNotification('Sorgu başarısız!', 'error');
                     }
-                } catch (error) {
-                    lastResult = `Hata: ${error.message}`;
+                } catch (fetchError) {
+                    lastResult = `API isteği hatası: ${fetchError.message}`;
                     originalResult = lastResult;
-                    resultDiv.innerHTML = `<div class="result-card">Bir hata oluştu: ${error.message}</div>`;
+                    resultDiv.innerHTML = `<div class="result-card">Bir hata oluştu: ${fetchError.message}</div>`;
                     submitBtn.classList.add('error');
                     showNotification('Sorgu başarısız!', 'error');
                 } finally {
