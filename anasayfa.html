@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sorgu Paneli</title>
+    <title>Sorgu Paneli - DARKWİB KİLLİR ECO</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
 
@@ -19,8 +19,8 @@
             --panel-glow: rgba(0, 255, 255, 0.3);
             --sidebar-bg: rgba(5, 5, 5, 0.9);
             --sidebar-border: #008080;
-            --result-card-bg: #1a1a1a; /* Yeni eklenen sonuç kartı arka plan rengi */
-            --result-card-border: #004d4d; /* Yeni eklenen sonuç kartı kenarlık rengi */
+            --result-card-bg: #1a1a1a;
+            --result-card-border: #004d4d;
         }
 
         * {
@@ -244,7 +244,6 @@
             min-height: 200px;
             max-height: 400px;
             overflow-y: auto;
-            white-space: pre-wrap;
             font-family: monospace;
             line-height: 1.5;
             transition: all 0.3s;
@@ -686,7 +685,7 @@
                 const resultCards = [];
                 let currentCard = '';
 
-                const unwantedKeywords = ['id', 'telegram', 'ip', 'user_id', 'username'];
+                const unwantedKeywords = ['id', 'telegram', 'ip', 'user_id', 'username', 'by_.ram'];
 
                 lines.forEach(line => {
                     const trimmedLine = line.trim();
@@ -694,13 +693,13 @@
                         if (currentCard) {
                             resultCards.push(currentCard);
                         }
-                        currentCard = `<h3>${trimmedLine.replace(/---/g, '')}</h3><br>`;
+                        const cardTitle = trimmedLine.replace(/---/g, '').trim();
+                        currentCard = `<h3>${cardTitle}</h3><br>`;
                     } else if (trimmedLine.includes(':')) {
                         const [key, value] = trimmedLine.split(':').map(s => s.trim());
                         const sanitizedKey = key.toLowerCase();
 
-                        // İstenmeyen anahtar kelimeleri kontrol et
-                        const isUnwanted = unwantedKeywords.some(keyword => sanitizedKey.includes(keyword));
+                        const isUnwanted = unwantedKeywords.some(keyword => sanitizedKey.includes(keyword) || (value && value.toLowerCase().includes(keyword)));
 
                         if (!isUnwanted && value) {
                             currentCard += `<p><strong>${key}:</strong> <span class="highlight">${value}</span></p>`;
@@ -799,7 +798,6 @@
                 const lines = originalResult.split('\n');
                 const filteredLines = lines.filter(line => line.toLowerCase().includes(filterText));
 
-                // Filtrelenmiş sonuçları formatlayıp göster
                 resultDiv.innerHTML = formatResult(filteredLines.join('\n'));
             }
 
