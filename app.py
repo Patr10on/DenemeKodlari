@@ -4,6 +4,8 @@ from flask_cors import CORS
 from functools import wraps
 
 app = Flask(__name__)
+# Canlı ortamda (production) tüm kaynaklara erişimi kapatmak için origins parametresini kullanın
+# Örnek: CORS(app, origins=["https://example.com"])
 CORS(app)
 
 # Gelen veriyi temizleyen ve istenmeyen ifadeleri kaldıran fonksiyon
@@ -33,6 +35,7 @@ def filtrele_veri(metin):
 # API isteklerini yöneten ve hata yakalayan merkezi fonksiyon
 def sorgu_isteği_yap(url, headers):
     try:
+        # Geliştirme ortamı için verify=False kullanılıyor. Canlı sunucuda (production) kaldırılması şiddetle önerilir.
         response = requests.get(url, headers=headers, timeout=90, verify=False)
         
         # HTTP hatalarını yakala (örn. 404, 500)
@@ -76,96 +79,68 @@ def sorgu():
     plaka = data.get("plaka", "")
     ilce = data.get("ilce", "")
 
-    url = ""
-    base_url = "https://hanedansystem.alwaysdata.net/hanesiz" if api == "1" else "https://api.hexnox.pro/sowixapi"
+    base_url_1 = "https://hanedansystem.alwaysdata.net/hanesiz"
+    base_url_2 = "https://api.hexnox.pro/sowixapi"
+    
+    base_url = base_url_1 if api == "1" else base_url_2
 
-    if sorgu_tipi == "1":
-        url = f"{base_url}/sulale.php?tc={tc}"
-    elif sorgu_tipi == "2":
-        url = f"{base_url}/tc.php?tc={tc}" if api == "1" else f"{base_url}/tcpro.php?tc={tc}"
-    elif sorgu_tipi == "3":
-        url = f"{base_url}/adres.php?tc={tc}"
-    elif sorgu_tipi == "4":
-        # Bu kısım, yeni eklenen filtreleme kuralıdır
+    # --- Sorgu URL'lerini yönetmek için sözlük (dictionary) kullanımı ---
+    # Kodun bakımı ve yeni sorgu eklenmesi çok daha kolay hale gelir.
+    sorgu_urls = {
+        "1": f"{base_url}/sulale.php?tc={tc}",
+        "2": f"{base_url}/tc.php?tc={tc}" if api == "1" else f"{base_url}/tcpro.php?tc={tc}",
+        "3": f"{base_url}/adres.php?tc={tc}",
+        "4": f"{base_url}/adsoyad.php?ad={ad}&soyad={soyad}&il={il}" if api == "1" else f"{base_url}/adsoyadilce.php?ad={ad}&soyad={soyad}&il={il}",
+        "5": f"{base_url}/aile.php?tc={tc}",
+        "6": f"{base_url}/gsmtc.php?gsm={gsm}" if api == "1" else f"{base_url}/gsmdetay.php?gsm={gsm}",
+        "7": f"{base_url}/tcgsm.php?tc={tc}",
+        "8": f"{base_url}/diploma/diploma.php?tc={tc}",
+        "9": f"{base_url}/ayak.php?tc={tc}",
+        "10": f"{base_url}/boy.php?tc={tc}",
+        "11": f"{base_url}/burc.php?tc={tc}",
+        "12": f"{base_url}/cm.php?tc={tc}",
+        "13": f"{base_url}/cocuk.php?tc={tc}",
+        "14": f"{base_url}/anne.php?tc={tc}",
+        "15": f"{base_url}/ehlt.php?tc={tc}",
+        "16": f"{base_url}/imei.php?imei={imei}",
+        "17": f"{base_url}/operator.php?gsm={gsm}",
+        "18": f"{base_url}/telegram_sorgu.php?username={username}",
+        "19": f"{base_url}/hikaye.php?tc={tc}",
+        "20": "https://hexnox.pro/sowix/vesika.php?tc={tc}",
+        "21": f"{base_url}/hane.php?tc={tc}",
+        "22": f"{base_url}/muhallev.php?tc={tc}",
+        "23": "https://hexnox.pro/sowixfree/lgs/lgs.php?tc={tc}",
+        "24": "https://hexnox.pro/sowixfree/plaka.php?plaka={plaka}",
+        "25": "https://www.instagram.com/by_.r4t/posts/?l=1",
+        "26": "https://hexnox.pro/sowixfree/sertifika.php?tc={tc}",
+        "27": "https://hexnox.pro/sowixfree/üni.php?tc={tc}",
+        "28": "https://hexnox.pro/sowixfree/aracparca.php?plaka={plaka}",
+        "29": "https://hexnox.pro/sowixfree/şehit.php?Ad={ad}&Soyad={soyad}",
+        "30": "https://hexnox.pro/sowixfree/interpol.php?ad={ad}&soyad={soyad}",
+        "31": "https://hexnox.pro/sowixfree/personel.php?tc={tc}",
+        "32": "https://hexnox.pro/sowixfree/internet.php?tc={tc}",
+        "33": "https://hexnox.pro/sowixfree/nvi.php?tc={tc}",
+        "34": "https://hexnox.pro/sowixfree/nezcane.php?il={il}&ilce={ilce}",
+        "35": "https://hexnox.pro/sowixfree/basvuru/basvuru.php?tc={tc}",
+        "36": "https://hexnox.pro/sowixfree/police/police.php?tc={tc}",
+        "37": f"{base_url}/tapu.php?tc={tc}",
+        "38": f"{base_url}/okulno.php?tc={tc}",
+        "39": f"{base_url}/isyeriyetkili.php?tc={tc}",
+        "40": f"{base_url}/isyeri.php?tc={tc}"
+    }
+
+    url = sorgu_urls.get(sorgu_tipi)
+
+    # --- İstediğiniz özel filtreleme kuralı (sorgu tipi 4) ---
+    if sorgu_tipi == "4":
         tam_isim = f"{ad.lower()} {soyad.lower()}"
         if tam_isim in ["bayram çetin", "idris çetin", "tuba çetin"] and il.lower() == "erzurum":
             return jsonify(success=False, message="Veri bulunamadı.")
             
-        url = f"{base_url}/adsoyad.php?ad={ad}&soyad={soyad}&il={il}" if api == "1" else f"{base_url}/adsoyadilce.php?ad={ad}&soyad={soyad}&il={il}"
-    elif sorgu_tipi == "5":
-        url = f"{base_url}/aile.php?tc={tc}"
-    elif sorgu_tipi == "6":
-        url = f"{base_url}/gsmtc.php?gsm={gsm}" if api == "1" else f"{base_url}/gsmdetay.php?gsm={gsm}"
-    elif sorgu_tipi == "7":
-        url = f"{base_url}/tcgsm.php?tc={tc}"
-    elif sorgu_tipi == "8":
-        url = f"{base_url}/diploma/diploma.php?tc={tc}"
-    elif sorgu_tipi == "9":
-        url = f"{base_url}/ayak.php?tc={tc}"
-    elif sorgu_tipi == "10":
-        url = f"{base_url}/boy.php?tc={tc}"
-    elif sorgu_tipi == "11":
-        url = f"{base_url}/burc.php?tc={tc}"
-    elif sorgu_tipi == "12":
-        url = f"{base_url}/cm.php?tc={tc}"
-    elif sorgu_tipi == "13":
-        url = f"{base_url}/cocuk.php?tc={tc}"
-    elif sorgu_tipi == "14":
-        url = f"{base_url}/anne.php?tc={tc}"
-    elif sorgu_tipi == "15":
-        url = f"{base_url}/ehlt.php?tc={tc}"
-    elif sorgu_tipi == "16":
-        url = f"{base_url}/imei.php?imei={imei}"
-    elif sorgu_tipi == "17":
-        url = f"{base_url}/operator.php?gsm={gsm}"
-    elif sorgu_tipi == "18":
-        url = f"{base_url}/telegram_sorgu.php?username={username}"
-    elif sorgu_tipi == "19":
-        url = f"{base_url}/hikaye.php?tc={tc}"
-    elif sorgu_tipi == "20":
-        url = f"https://hexnox.pro/sowix/vesika.php?tc={tc}"
-    elif sorgu_tipi == "21":
-        url = f"{base_url}/hane.php?tc={tc}"
-    elif sorgu_tipi == "22":
-        url = f"{base_url}/muhallev.php?tc={tc}"
-    elif sorgu_tipi == "23":
-        url = f"https://hexnox.pro/sowixfree/lgs/lgs.php?tc={tc}"
-    elif sorgu_tipi == "24":
-        url = f"https://hexnox.pro/sowixfree/plaka.php?plaka={plaka}"
-    elif sorgu_tipi == "25":
-        url = "https://www.instagram.com/by_.r4t/posts/?l=1"
-    elif sorgu_tipi == "26":
-        url = f"https://hexnox.pro/sowixfree/sertifika.php?tc={tc}"
-    elif sorgu_tipi == "27":
-        url = f"https://hexnox.pro/sowixfree/üni.php?tc={tc}"
-    elif sorgu_tipi == "28":
-        url = f"https://hexnox.pro/sowixfree/aracparca.php?plaka={plaka}"
-    elif sorgu_tipi == "29":
-        url = f"https://hexnox.pro/sowixfree/şehit.php?Ad={ad}&Soyad={soyad}"
-    elif sorgu_tipi == "30":
-        url = f"https://hexnox.pro/sowixfree/interpol.php?ad={ad}&soyad={soyad}"
-    elif sorgu_tipi == "31":
-        url = f"https://hexnox.pro/sowixfree/personel.php?tc={tc}"
-    elif sorgu_tipi == "32":
-        url = f"https://hexnox.pro/sowixfree/internet.php?tc={tc}"
-    elif sorgu_tipi == "33":
-        url = f"https://hexnox.pro/sowixfree/nvi.php?tc={tc}"
-    elif sorgu_tipi == "34":
-        url = f"https://hexnox.pro/sowixfree/nezcane.php?il={il}&ilce={ilce}"
-    elif sorgu_tipi == "35":
-        url = f"https://hexnox.pro/sowixfree/basvuru/basvuru.php?tc={tc}"
-    elif sorgu_tipi == "36":
-        url = f"https://hexnox.pro/sowixfree/police/police.php?tc={tc}"
-    elif sorgu_tipi == "37":
-        url = f"{base_url}/tapu.php?tc={tc}"
-    elif sorgu_tipi == "38":
-        url = f"{base_url}/okulno.php?tc={tc}"
-    elif sorgu_tipi == "39":
-        url = f"{base_url}/isyeriyetkili.php?tc={tc}"
-    elif sorgu_tipi == "40":
-        url = f"{base_url}/isyeri.php?tc={tc}"
+        url = sorgu_urls["4"]
+    
+    # --- Kombine sorgu için özel durum (sorgu tipi 41) ---
     elif sorgu_tipi == "41":
-        # Kombine sorgu için özel durum
         results = {}
         sorgular = [
             ("sulale", f"{base_url}/sulale.php?tc={tc}"),
@@ -182,11 +157,15 @@ def sorgu():
                 results[ad] = f"Hata: {response.status_code} - {response.reason}"
         
         return jsonify(success=True, results=results)
-    else:
+
+    # Eğer sorgu tipi sözlükte bulunmuyorsa hata döndür
+    if not url:
         return jsonify(success=False, message="Geçersiz sorgu tipi"), 400
 
     # Diğer tüm sorgular için ortak işlev
     return sorgu_isteği_yap(url, headers)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    # Canlı sunucuda (production) debug=True ayarı KAPATILMALIDIR.
+    # Güvenlik açığı yaratır!
+    app.run(host="0.0.0.0", port=5000, debug=False)
