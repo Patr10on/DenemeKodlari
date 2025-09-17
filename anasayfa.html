@@ -3,24 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sorgu Paneli - DARKWİB KİLLİR ECO</title>
+    <title>P4TRON</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
 
         :root {
-            --bg-color: #000000;
-            --primary: #00ffff;
-            --secondary: #00bfff;
-            --text: #e0e0e0;
-            --panel-bg: rgba(10, 10, 10, 0.8);
-            --border: #008080;
-            --error: #ff4500;
-            --success: #32cd32;
-            --panel-glow: rgba(0, 255, 255, 0.3);
-            --sidebar-bg: rgba(5, 5, 5, 0.9);
-            --sidebar-border: #008080;
-            --result-card-bg: #1a1a1a;
-            --result-card-border: #004d4d;
+            --bg-color: #020617;
+            --primary: #0ea5e9;
+            --secondary: #67e8f9;
+            --text: #e2e8f0;
+            --panel-bg: rgba(15, 23, 42, 0.6);
+            --border: rgba(56, 189, 248, 0.3);
+            --error: #ef4444;
+            --success: #22c55e;
+            --panel-glow: rgba(14, 165, 233, 0.1);
+            --sidebar-bg: rgba(2, 6, 23, 0.8);
+            --sidebar-border: rgba(56, 189, 248, 0.15);
         }
 
         * {
@@ -43,8 +41,8 @@
         }
 
         @keyframes background-glow {
-            from { box-shadow: 0 0 200px rgba(0, 255, 255, 0.05) inset; }
-            to { box-shadow: 0 0 200px rgba(0, 255, 255, 0.15) inset; }
+            from { box-shadow: 0 0 200px rgba(14, 165, 233, 0.05) inset; }
+            to { box-shadow: 0 0 200px rgba(14, 165, 233, 0.15) inset; }
         }
 
         .header {
@@ -80,7 +78,7 @@
             cursor: pointer;
             width: 40px;
             height: 40px;
-            background: rgba(10, 10, 10, 0.8);
+            background: rgba(15, 23, 42, 0.8);
             border: 1px solid var(--border);
             border-radius: 50%;
             display: flex;
@@ -89,7 +87,7 @@
             align-items: center;
             transition: transform 0.3s;
         }
-        
+
         .menu-toggle:hover {
             transform: scale(1.1);
         }
@@ -165,7 +163,7 @@
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
-            background: #111;
+            background: rgba(2, 6, 23, 0.5);
             border: 1px solid var(--border);
             border-radius: 5px;
             color: var(--text);
@@ -175,9 +173,9 @@
         input:focus, select:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+            box-shadow: 0 0 8px rgba(14, 165, 233, 0.5);
         }
-        
+
         button {
             background: var(--primary);
             color: var(--bg-color);
@@ -191,7 +189,6 @@
             transition: all 0.3s;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 0 10px var(--primary);
         }
 
         button::after {
@@ -201,7 +198,7 @@
             left: 50%;
             width: 5px;
             height: 5px;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(255, 255, 255, 0.5);
             opacity: 0;
             border-radius: 50%;
             transform: translate(-50%, -50%) scale(0);
@@ -211,9 +208,9 @@
         button:hover {
             background: var(--secondary);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 191, 255, 0.3);
+            box-shadow: 0 5px 15px rgba(103, 232, 249, 0.3);
         }
-        
+
         button:hover::after {
             transform: translate(-50%, -50%) scale(100);
             opacity: 1;
@@ -228,30 +225,28 @@
 
         button.success {
             background-color: var(--success);
-            box-shadow: 0 5px 15px rgba(50, 205, 50, 0.3);
+            box-shadow: 0 5px 15px rgba(34, 197, 94, 0.3);
         }
 
         button.error {
             background-color: var(--error);
-            box-shadow: 0 5px 15px rgba(255, 69, 0, 0.3);
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
         }
 
         .result {
-            background: #111;
+            background: rgba(2, 6, 23, 0.5);
             border: 1px solid var(--border);
             border-radius: 5px;
             padding: 15px;
             min-height: 200px;
             max-height: 400px;
             overflow-y: auto;
+            white-space: pre-wrap;
             font-family: monospace;
             line-height: 1.5;
             transition: all 0.3s;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
         }
-        
+
         .result strong {
             color: var(--secondary);
         }
@@ -263,24 +258,6 @@
         .result .highlight {
             color: var(--primary);
             font-weight: bold;
-        }
-
-        .result-card {
-            background-color: var(--result-card-bg);
-            border: 1px solid var(--result-card-border);
-            border-radius: 5px;
-            padding: 10px;
-            animation: card-fade-in 0.5s ease-out;
-            transition: box-shadow 0.3s;
-        }
-
-        .result-card:hover {
-            box-shadow: 0 0 15px var(--panel-glow);
-        }
-
-        @keyframes card-fade-in {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
         }
 
         .actions {
@@ -296,16 +273,15 @@
             background: transparent;
             color: var(--text);
             border: 1px solid var(--border);
-            box-shadow: none;
         }
 
         .actions button:hover {
-            background: rgba(0, 255, 255, 0.1);
+            background: rgba(14, 165, 233, 0.1);
             transform: translateY(-2px);
         }
 
         .loader {
-            border: 3px solid rgba(0, 255, 255, 0.2);
+            border: 3px solid rgba(14, 165, 233, 0.2);
             border-top: 3px solid var(--primary);
             border-radius: 50%;
             width: 20px;
@@ -325,7 +301,7 @@
             bottom: 20px;
             right: 20px;
             padding: 12px 18px;
-            background: var(--panel-bg);
+            background: rgba(15, 23, 42, 0.9);
             border-radius: 5px;
             transform: translateX(200%);
             transition: transform 0.4s ease-out;
@@ -367,6 +343,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Sidebar CSS */
         .sidebar-title {
             color: var(--primary);
             font-size: 1.2rem;
@@ -387,7 +364,7 @@
             cursor: pointer;
             transition: color 0.3s;
         }
-        
+
         .category-header:hover {
             color: var(--primary);
         }
@@ -410,7 +387,7 @@
             margin-right: 5px;
             transition: margin-right 0.2s;
         }
-        
+
         .sorgu-list li:hover {
             color: var(--secondary);
             transform: translateX(5px);
@@ -439,7 +416,7 @@
             opacity: 1;
             visibility: visible;
         }
-        
+
     </style>
 </head>
 <body>
@@ -457,7 +434,7 @@
             <option value="1">API 1</option>
             <option value="2">API 2</option>
         </select>
-        
+
         <div class="sorgu-category">
             <div class="category-header">Kimlik Sorguları</div>
             <ul class="sorgu-list">
@@ -488,7 +465,7 @@
                 <li data-sorgu="41">41 - İNFO Sorgu (1+2+3+5)</li>
             </ul>
         </div>
-        
+
         <div class="sorgu-category">
             <div class="category-header">Telefon / İletişim Sorguları</div>
             <ul class="sorgu-list">
@@ -516,17 +493,17 @@
                 <li data-sorgu="11">11 - Burç Sorgu</li>
                 <li data-sorgu="16">16 - IMEI Sorgu</li>
                 <li data-sorgu="23">23 - LGS Sonuç</li>
-                <li data-sorgu="25">25 - İG @by_.ram</li>
+                <li data-sorgu="25">25 - İG @by_.r4t</li>
                 <li data-sorgu="29">29 - Şehit Sorgu</li>
                 <li data-sorgu="30">30 - Interpol Sorgu</li>
                 <li data-sorgu="34">34 - Nezaket Sorgu</li>
             </ul>
         </div>
     </div>
-    
+
     <div class="overlay" id="overlay"></div>
 
-    <h1 class="header">DARKWİB KİLLİR ECO</h1>
+    <h1 class="header">P4TRON</h1>
 
     <div class="main-container">
         <div class="panel">
@@ -606,7 +583,7 @@
                 inputsDiv.innerHTML = '';
                 const inputs = requiredInputs[selectedSorguType] || [];
                 const sorguName = document.querySelector(`li[data-sorgu='${selectedSorguType}']`).textContent;
-                
+
                 sorguPanelTitle.textContent = sorguName;
 
                 inputs.forEach(inputName => {
@@ -677,43 +654,27 @@
                 }, 3000);
             }
 
-            // Yeni formatlama fonksiyonu
             function formatResult(text) {
                 if (!text) return '';
+                let formattedText = text;
+                const lines = formattedText.split('\n');
+                const keywords = ["Adı:", "Soyadı:", "TCKN:", "Telefon:", "Adres:", "Plaka:", "IMEI:", "TC NO:", "TC:", "Anne Adı:", "Baba Adı:", "GSM:", "Tarih:", "Sıra No:", "İl/İlçe:", "Ad:", "Soyad:"];
 
-                const lines = text.split('\n').filter(line => line.trim() !== '');
-                const resultCards = [];
-                let currentCard = '';
-
-                const unwantedKeywords = ['id', 'telegram', 'ip', 'user_id', 'username', 'by_.ram'];
-
-                lines.forEach(line => {
-                    const trimmedLine = line.trim();
-                    if (trimmedLine.startsWith('---') && trimmedLine.endsWith('---')) {
-                        if (currentCard) {
-                            resultCards.push(currentCard);
+                lines.forEach((line, index) => {
+                    keywords.forEach(keyword => {
+                        if (line.includes(keyword)) {
+                            const parts = line.split(keyword);
+                            if (parts.length > 1) {
+                                let value = parts[1].trim();
+                                if (value) {
+                                    value = `<span class="highlight">${value}</span>`;
+                                }
+                                lines[index] = `${parts[0]}<strong>${keyword}</strong> ${value}`;
+                            }
                         }
-                        const cardTitle = trimmedLine.replace(/---/g, '').trim();
-                        currentCard = `<h3>${cardTitle}</h3><br>`;
-                    } else if (trimmedLine.includes(':')) {
-                        const [key, value] = trimmedLine.split(':').map(s => s.trim());
-                        const sanitizedKey = key.toLowerCase();
-
-                        const isUnwanted = unwantedKeywords.some(keyword => sanitizedKey.includes(keyword) || (value && value.toLowerCase().includes(keyword)));
-
-                        if (!isUnwanted && value) {
-                            currentCard += `<p><strong>${key}:</strong> <span class="highlight">${value}</span></p>`;
-                        }
-                    } else if (trimmedLine) {
-                        currentCard += `<p>${trimmedLine}</p>`;
-                    }
+                    });
                 });
-
-                if (currentCard) {
-                    resultCards.push(currentCard);
-                }
-
-                return resultCards.map(cardHtml => `<div class="result-card">${cardHtml}</div>`).join('');
+                return lines.join('<br>');
             }
 
             async function sendQuery() {
@@ -748,45 +709,34 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
                     });
-                    
-                    const responseText = await response.text();
+                    const result = await response.json();
 
-                    try {
-                        const result = JSON.parse(responseText);
-
-                        if (result.success) {
-                            let resultText;
-                            if (result.results) {
-                                let combinedOutput = '';
-                                for (const key in result.results) {
-                                    combinedOutput += `--- ${key.toUpperCase()} ---\n${result.results[key]}\n\n`;
-                                }
-                                resultText = combinedOutput;
-                            } else {
-                                resultText = result.result;
+                    if (result.success) {
+                        let resultText;
+                        if (result.results) {
+                            let combinedOutput = '';
+                            for (const key in result.results) {
+                                combinedOutput += `--- ${key.toUpperCase()} ---\n${result.results[key]}\n\n`;
                             }
-                            originalResult = resultText;
-                            resultDiv.innerHTML = formatResult(resultText);
-                            submitBtn.classList.add('success');
-                            showNotification('Sorgu başarılı!', 'success');
+                            resultText = combinedOutput;
                         } else {
-                            lastResult = result.message || 'Sorgu başarısız oldu.';
-                            originalResult = lastResult;
-                            resultDiv.innerHTML = `<div class="result-card">${lastResult}</div>`;
-                            submitBtn.classList.add('error');
-                            showNotification(lastResult, 'error');
+                            resultText = result.result;
                         }
-                    } catch (jsonError) {
-                        lastResult = `JSON çözümleme hatası: ${jsonError.message}. Sunucudan gelen ham veri: ${responseText}`;
+                        originalResult = resultText;
+                        resultDiv.innerHTML = formatResult(resultText);
+                        submitBtn.classList.add('success');
+                        showNotification('Sorgu başarılı!', 'success');
+                    } else {
+                        lastResult = result.message || 'Sorgu başarısız oldu.';
                         originalResult = lastResult;
-                        resultDiv.innerHTML = `<div class="result-card">${lastResult}</div>`;
+                        resultDiv.innerHTML = lastResult;
                         submitBtn.classList.add('error');
-                        showNotification('Sorgu başarısız!', 'error');
+                        showNotification(lastResult, 'error');
                     }
-                } catch (fetchError) {
-                    lastResult = `API isteği hatası: ${fetchError.message}`;
+                } catch (error) {
+                    lastResult = `Hata: ${error.message}`;
                     originalResult = lastResult;
-                    resultDiv.innerHTML = `<div class="result-card">Bir hata oluştu: ${fetchError.message}</div>`;
+                    resultDiv.innerHTML = `Bir hata oluştu: ${error.message}`;
                     submitBtn.classList.add('error');
                     showNotification('Sorgu başarısız!', 'error');
                 } finally {
@@ -805,25 +755,23 @@
                     resultDiv.innerHTML = formatResult(originalResult);
                     return;
                 }
-
                 const lines = originalResult.split('\n');
                 const filteredLines = lines.filter(line => line.toLowerCase().includes(filterText));
-
                 resultDiv.innerHTML = formatResult(filteredLines.join('\n'));
             }
 
             copyBtn.addEventListener('click', () => {
-                const textToCopy = originalResult;
-                if (!textToCopy) { showNotification('Kopyalanacak sonuç yok!', 'error'); return; }
-                navigator.clipboard.writeText(textToCopy)
+                if (!lastResult) { showNotification('Kopyalanacak sonuç yok!', 'error'); return; }
+                const plainText = resultDiv.textContent || resultDiv.innerText;
+                navigator.clipboard.writeText(plainText)
                     .then(() => showNotification('Panoya kopyalandı!', 'success'))
                     .catch(() => showNotification('Kopyalama başarısız!', 'error'));
             });
 
             downloadBtn.addEventListener('click', () => {
-                const textToDownload = originalResult;
-                if (!textToDownload) { showNotification('İndirilecek sonuç yok!', 'error'); return; }
-                const blob = new Blob([textToDownload], { type: 'text/plain' });
+                if (!lastResult) { showNotification('İndirilecek sonuç yok!', 'error'); return; }
+                const plainText = resultDiv.textContent || resultDiv.innerText;
+                const blob = new Blob([plainText], { type: 'text/plain' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
@@ -858,7 +806,7 @@
 
             submitBtn.addEventListener('click', sendQuery);
             filterInput.addEventListener('input', filterResult);
-            
+
             sorguListItems[0].click();
         });
     </script>
