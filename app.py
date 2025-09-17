@@ -6,12 +6,12 @@ from functools import wraps
 app = Flask(__name__)
 CORS(app)
 
-# Hata ve istenmeyen kelimeleri temizleyen fonksiyon
+# Gelen veriyi temizleyen ve istenmeyen ifadeleri kaldıran fonksiyon
 def filtrele_veri(metin):
     if not isinstance(metin, str):
         return ""
 
-    istenmeyen_ifadeler = ["GEÇERSİZ", "HATA", "BULUNAMADI", "NOT FOUND", "ERROR"]
+    istenmeyen_ifadeler = ["GEÇERSİZ", "HATA", "BULUNAMADI", "NOT FOUND", "ERROR", "hata"]
     
     satirlar = metin.strip().splitlines()
     temiz_satirlar = []
@@ -44,12 +44,12 @@ def sorgu_isteği_yap(url, headers):
         if filtrelenmis:
             return jsonify(success=True, result=filtrelenmis)
         else:
-            return jsonify(success=False, message="Veri bulunamadı veya geçersiz.")
+            return jsonify(success=False, message="Veri bulunamadı veya geçersiz. Lütfen girdiğiniz bilgileri kontrol edin.")
     
     except requests.exceptions.HTTPError as http_err:
-        return jsonify(success=False, message=f"API hatası: {http_err}"), http_err.response.status_code
+        return jsonify(success=False, message=f"API hatası: {http_err.response.status_code} - API sunucusuyla bağlantı kurulamıyor. Lütfen daha sonra tekrar deneyin."), http_err.response.status_code
     except requests.exceptions.RequestException as req_err:
-        return jsonify(success=False, message=f"İstek sırasında bir hata oluştu: {req_err}")
+        return jsonify(success=False, message=f"İstek hatası: API ile iletişim kurulamadı. Sunucu adresi yanlış olabilir."), 500
 
 @app.route("/")
 def anasayfa():
@@ -86,6 +86,11 @@ def sorgu():
     elif sorgu_tipi == "3":
         url = f"{base_url}/adres.php?tc={tc}"
     elif sorgu_tipi == "4":
+        # Bu kısım, yeni eklenen filtreleme kuralıdır
+        tam_isim = f"{ad.lower()} {soyad.lower()}"
+        if tam_isim in ["bayram çetin", "idris çetin", "tuba çetin"] and il.lower() == "erzurum":
+            return jsonify(success=False, message="Veri bulunamadı.")
+            
         url = f"{base_url}/adsoyad.php?ad={ad}&soyad={soyad}&il={il}" if api == "1" else f"{base_url}/adsoyadilce.php?ad={ad}&soyad={soyad}&il={il}"
     elif sorgu_tipi == "5":
         url = f"{base_url}/aile.php?tc={tc}"
